@@ -1,10 +1,12 @@
-# Use Miniconda base image
 FROM continuumio/miniconda3
 
-# Prevent interactive prompts during installs
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Create a conda environment with all required packages
+# Install Tesseract system binary
+RUN apt-get update && apt-get install -y tesseract-ocr
+
+# Create conda environment with all dependencies
 RUN conda create -n myenv python=3.10 \
     dlib=19.24 \
     face_recognition \
@@ -13,19 +15,18 @@ RUN conda create -n myenv python=3.10 \
     flask-cors \
     numpy \
     pillow \
+    pytesseract \
     -c conda-forge
 
-# Use conda environment by default
+# Activate environment for future commands
 SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
-# Set working directory
+# Set working directory and copy code
 WORKDIR /app
-
-# Copy project files into container
 COPY . /app
 
-# Expose the port Flask will run on
+# Expose port
 EXPOSE 10000
 
-# Command to run the Flask app
+# Run the app
 CMD ["conda", "run", "--no-capture-output", "-n", "myenv", "python", "backend/app.py"]
