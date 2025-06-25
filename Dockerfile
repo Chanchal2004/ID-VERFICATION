@@ -1,7 +1,6 @@
-# Use official Python image with build tools
 FROM python:3.10-slim
 
-# Install system dependencies required by dlib and face_recognition
+# Install required system packages
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -15,18 +14,29 @@ RUN apt-get update && apt-get install -y \
 # Set working directory
 WORKDIR /app
 
-# Copy all files into container
+# Copy all files
 COPY . /app
 
-# Upgrade pip and install Python dependencies
+# Upgrade pip
 RUN pip install --upgrade pip
-RUN pip install face_recognition==1.3.0 opencv-python==4.8.1.78 flask==2.3.3 flask-cors==4.0.0 Pillow==9.5.0 numpy==1.24.3
 
-# Expose the port Flask will run on
-EXPOSE 10000
+# 👉 INSTALL dlib FIRST so wheel is used
+RUN pip install dlib==19.24.0
 
-# Set environment variable for Flask
+# 👉 THEN install face_recognition, which uses prebuilt dlib
+RUN pip install face_recognition==1.3.0
+
+# Install rest of your dependencies
+RUN pip install \
+    opencv-python==4.8.1.78 \
+    flask==2.3.3 \
+    flask-cors==4.0.0 \
+    Pillow==9.5.0 \
+    numpy==1.24.3
+
+# Set environment & port
 ENV FLASK_APP=backend/app.py
+EXPOSE 10000
 
 # Run the app
 CMD ["python", "backend/app.py"]
