@@ -1,42 +1,31 @@
-FROM python:3.10-slim
+# Use Miniconda base image
+FROM continuumio/miniconda3
 
-# Install required system packages
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    cmake \
-    libopenblas-dev \
-    liblapack-dev \
-    libx11-dev \
-    libgtk-3-dev \
-    libboost-all-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Prevent interactive prompts during installs
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Create a conda environment with all required packages
+RUN conda create -n myenv python=3.10 \
+    dlib=19.24 \
+    face_recognition \
+    opencv \
+    flask \
+    flask-cors \
+    numpy \
+    pillow \
+    -c conda-forge
+
+# Use conda environment by default
+SHELL ["conda", "run", "-n", "myenv", "/bin/bash", "-c"]
 
 # Set working directory
 WORKDIR /app
 
-# Copy all files
+# Copy project files into container
 COPY . /app
 
-# Upgrade pip
-RUN pip install --upgrade pip
-
-# 👉 INSTALL dlib FIRST so wheel is used
-RUN pip install dlib==19.24.0
-
-# 👉 THEN install face_recognition, which uses prebuilt dlib
-RUN pip install face_recognition==1.3.0
-
-# Install rest of your dependencies
-RUN pip install \
-    opencv-python==4.8.1.78 \
-    flask==2.3.3 \
-    flask-cors==4.0.0 \
-    Pillow==9.5.0 \
-    numpy==1.24.3
-
-# Set environment & port
-ENV FLASK_APP=backend/app.py
+# Expose the port Flask will run on
 EXPOSE 10000
 
-# Run the app
-CMD ["python", "backend/app.py"]
+# Command to run the Flask app
+CMD ["conda", "run", "--no-capture-output", "-n", "myenv", "python", "backend/app.py"]
