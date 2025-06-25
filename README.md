@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Face & Age Verification System
 
 Complete system with Frontend (React) + Backend (Flask) for identity verification.
@@ -77,6 +77,3 @@ The system works in two modes:
 - Images processed locally, not stored permanently
 - CORS configured for secure frontend-backend communication
 - No sensitive data transmitted over network
-=======
-# Zynga-hackathon-project
->>>>>>> 202a80d4240495144e011fad3412b3ca46e08e4f
