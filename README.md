@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 
 # Face & Age Verification System
 
@@ -78,6 +78,3 @@ The system works in two modes:
 - Images processed locally, not stored permanently
 - CORS configured for secure frontend-backend communication
 - No sensitive data transmitted over network
-=======
-# ID-VERFICATION
->>>>>>> 28c0d6557cc70c541f665118d9804bae8ec5a290
